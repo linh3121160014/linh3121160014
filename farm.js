@@ -4,7 +4,25 @@ import chalk from 'chalk';
 import Table from 'cli-table3';
 import { HieuTool, TaskType } from './src/engine.js';
 
+if (!process.env.TOKEN) {
+    console.error(chalk.hex('#d63031').bold('\n  ✖ ERROR: TOKEN is not set.'));
+    console.error(chalk.hex('#636e72')('  Copy .env.example to .env and add your Discord user token.\n'));
+    process.exit(1);
+}
+
 const app = new HieuTool(process.env.TOKEN);
+
+// Handle WebSocket-level errors (e.g. invalid / expired token, network issues)
+app.ws.on('error', ({ error }) => {
+    const msg = error?.message ?? String(error);
+    if (/authentication/i.test(msg)) {
+        console.error(chalk.hex('#d63031').bold('\n  ✖ Authentication failed — your Discord token is invalid or expired.'));
+        console.error(chalk.hex('#636e72')('  Update the TOKEN value in your .env file and try again.\n'));
+    } else {
+        console.error(chalk.hex('#d63031').bold(`\n  ✖ WebSocket error: ${msg}\n`));
+    }
+    process.exit(1);
+});
 
 const BANNER = `
 ${chalk.hex('#FF6B6B')('   __  __')}${chalk.hex('#FF8E53')('   ____')}${chalk.hex('#FECA57')('   ______')}${chalk.hex('#48DBFB')('   __  __')}${chalk.hex('#FF9FF3')('   ______')}${chalk.hex('#54A0FF')('   ____')}${chalk.hex('#5F27CD')('    ____')}${chalk.hex('#01A3A4')('    __ ')}
@@ -171,7 +189,7 @@ app.once(
         try {
             const bal = await app.getBalance();
             orbs = bal.balance;
-        } catch { }
+        } catch { /* balance fetch is optional; non-critical */ }
 
         const store = await app.loadQuests();
         const pending = store.pending();
@@ -251,7 +269,7 @@ app.once(
             if (gained > 0) {
                 console.log(chalk.hex('#a29bfe')(`\n  🔮 Orbs gained: +${gained}`));
             }
-        } catch { }
+        } catch { /* final balance fetch is optional; non-critical */ }
 
         draw(data.user);
         report(data.user, results);

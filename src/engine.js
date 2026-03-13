@@ -278,7 +278,7 @@ export class QuestStore {
                 const next = done + 7;
 
                 if (diff >= 7) {
-                    // Add a small fractional offset (0–1s) to simulate realistic non-integer playback timestamps
+                    // Add a small fractional value (0–1) to the timestamp to simulate a realistic non-integer playback position
                     const res = await this.#engine.rest.post(`/quests/${quest.id}/video-progress`, {
                         body: { timestamp: Math.min(target, next + Math.random()) },
                     });
