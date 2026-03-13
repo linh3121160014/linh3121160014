@@ -1,0 +1,24 @@
+{
+  "name": "discord-auto-quests",
+  "version": "1.0.0",
+  "description": "Discord Quest Auto Claim — Node.js JavaScript implementation",
+  "main": "farm.js",
+  "type": "module",
+  "scripts": {
+    "start": "node farm.js",
+    "go": "node farm.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@discordjs/core": "^1.1.1",
+    "@discordjs/rest": "^2.2.0",
+    "@discordjs/ws": "^1.0.2",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.3",
+    "discord-api-types": "^0.37.61",
+    "dotenv": "^16.0.0",
+    "undici": "^6.0.0"
+  }
+}
